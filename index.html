@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 알쏭달쏭 다의어 챌린지 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FFF0F5;
+            font-family: 'Jua', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 4px solid #FFC0CB;
+        }
+
+        h1 {
+            color: #FF69B4;
+            font-size: 28px;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(255, 182, 193, 0.5);
+        }
+
+        #intro-screen h1, #difficulty-screen h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        #intro-screen p, #difficulty-screen p {
+            font-size: 18px;
+            color: #8B008B;
+            margin-bottom: 30px;
+        }
+        
+        .start-btn {
+            font-family: 'Jua', sans-serif;
+            background: #FF69B4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(255, 105, 180, 0.4);
+            margin-top: 10px;
+        }
+        .start-btn:hover {
+            background: #FF1493;
+            transform: translateY(-2px);
+        }
+
+        .diff-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .diff-btn {
+            font-family: 'Jua', sans-serif;
+            background: #f8f8f8;
+            color: #333;
+            border: 3px solid #FFC0CB;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .diff-btn:hover {
+            background: #FFE4E1;
+            border-color: #FF69B4;
+            transform: translateY(-2px);
+        }
+
+        #difficulty-screen, #app {
+            display: none; 
+        }
+
+        .level-info {
+            background: #FFE4E1;
+            color: #D11585;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .progress {
+            font-size: 14px;
+            color: #FF69B4;
+            margin-bottom: 10px;
+        }
+        .question-box {
+            margin-bottom: 25px;
+        }
+        .hanja {
+            font-size: 40px; 
+            font-weight: bold;
+            color: #C71585;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+        .question-text {
+            font-size: 18px;
+            color: #8B008B;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        button.option-btn {
+            font-family: 'Jua', sans-serif;
+            background: #FF69B4; 
+            color: white;        
+            font-weight: bold;
+            border: 2px solid #FF69B4; 
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(255, 105, 180, 0.4);
+        }
+        
+        button.option-btn:hover {
+            background: #FF1493; 
+            border: 2px solid #FF1493;
+            transform: translateY(-2px);
+        }
+        button.option-btn:active {
+            transform: translateY(1px);
+        }
+        
+        #message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #FF1493;
+            height: 60px; 
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+<div id="intro-screen" class="card">
+    <h1>MANNAL 다의어</h1>
+    <p>하나의 단어, 여러 가지 뜻!<br>알쏭달쏭 다의어 정복을 시작할까요?</p>
+    <button class="start-btn" onclick="goToDifficultySelection()">신나게 시작해 보자 확인!</button>
+</div>
+
+<div id="difficulty-screen" class="card">
+    <h1>🎯 난이도 선택</h1>
+    <p>도전할 단어 수준을 골라주세요!</p>
+    <div class="diff-options">
+        <button class="diff-btn" onclick="startGame('초급')">🌱 초급 (일상 어휘)</button>
+        <button class="diff-btn" onclick="startGame('중급')">🌿 중급 (표현 어휘)</button>
+        <button class="diff-btn" onclick="startGame('고급')">🔥 고급 (심화 어휘)</button>
+    </div>
+</div>
+
+<div id="app" class="card">
+    <h1>🌸 다의어 챌린지 🌸</h1>
+    <div class="level-info" id="level-display">Level 1</div>
+    <div class="progress" id="progress-display">현재 레벨 진행도: 0 / 1</div>
+    
+    <div class="question-box">
+        <div class="hanja" id="hanja-display"></div>
+        <div class="question-text">이 단어의 올바른 풀이는 무엇일까요?</div>
+    </div>
+
+    <div class="options" id="options-container"></div>
+
+    <div id="message"></div>
+</div>
+
+<script>
+    /* =======================================================
+       🔊 효과음 (Web Audio API) 설정 
+       ======================================================= */
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playTone(freq, type, duration, startTime) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + startTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + startTime);
+        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + startTime + duration);
+        osc.stop(audioCtx.currentTime + startTime + duration);
+    }
+
+    function playDingDong() {
+        initAudio();
+        playTone(659.25, 'sine', 0.5, 0);       
+        playTone(523.25, 'sine', 0.5, 0.4);     
+    }
+
+    function playBeepBeep() {
+        initAudio();
+        playTone(300, 'square', 0.2, 0);        
+        playTone(300, 'square', 0.2, 0.3);      
+    }
+
+    window.onload = () => {
+        document.body.addEventListener('click', initAudio, { once: true });
+    };
+
+    /* =======================================================
+       🚀 다의어 데이터베이스 (난이도별 20개씩)
+       ======================================================= */
+    const polysemyDB = [
+        // 🌱 초급 (20개)
+        { difficulty: "초급", hanja: "가리다", meaning: "보이지 않도록 감추거나 막다" },
+        { difficulty: "초급", hanja: "가리다", meaning: "물건을 골라내거나 식별하다" },
+        { difficulty: "초급", hanja: "가리다", meaning: "음식을 골라 먹다" },
+        { difficulty: "초급", hanja: "가다", meaning: "한 곳에서 다른 곳으로 이동하다" },
+        { difficulty: "초급", hanja: "가다", meaning: "기계 따위가 작동하다" },
+        { difficulty: "초급", hanja: "먹다", meaning: "음식을 입에 넣어 삼키다" },
+        { difficulty: "초급", hanja: "먹다", meaning: "겁을 느끼거나 마음을 품다" },
+        { difficulty: "초급", hanja: "쓰다", meaning: "글씨를 적다" },
+        { difficulty: "초급", hanja: "쓰다", meaning: "모자를 머리에 얹다" },
+        { difficulty: "초급", hanja: "쓰다", meaning: "도구를 이용하다" },
+        { difficulty: "초급", hanja: "보다", meaning: "눈으로 대상을 느끼다" },
+        { difficulty: "초급", hanja: "보다", meaning: "맛을 경험하다" },
+        { difficulty: "초급", hanja: "보다", meaning: "시험을 치르다" },
+        { difficulty: "초급", hanja: "치다", meaning: "손이나 물건으로 때리다" },
+        { difficulty: "초급", hanja: "치다", meaning: "시험이나 파도를 겪다" },
+        { difficulty: "초급", hanja: "치다", meaning: "가축을 기르다" },
+        { difficulty: "초급", hanja: "내다", meaning: "길을 만들거나 구멍을 뚫다" },
+        { difficulty: "초급", hanja: "내다", meaning: "돈을 지불하다" },
+        { difficulty: "초급", hanja: "내다", meaning: "소문을 퍼뜨리거나 알리다" },
+        { difficulty: "초급", hanja: "남다", meaning: "다 쓰고 나머지가 있게 되다" },
+
+        // 🌿 중급 (20개)
+        { difficulty: "중급", hanja: "타다", meaning: "탈것이나 기구에 몸을 얹다" },
+        { difficulty: "중급", hanja: "타다", meaning: "불길이 일어나다" },
+        { difficulty: "중급", hanja: "타다", meaning: "악기의 줄을 울리다" },
+        { difficulty: "중급", hanja: "풀다", meaning: "묶인 것을 끄르다" },
+        { difficulty: "중급", hanja: "풀다", meaning: "문제의 답을 알아내다" },
+        { difficulty: "중급", hanja: "풀다", meaning: "긴장이나 화를 가라앉히다" },
+        { difficulty: "중급", hanja: "걸다", meaning: "물건을 높은 곳에 매달다" },
+        { difficulty: "중급", hanja: "걸다", meaning: "말을 먼저 건네다" },
+        { difficulty: "중급", hanja: "걸다", meaning: "내기나 조건을 내세우다" },
+        { difficulty: "중급", hanja: "박다", meaning: "못을 두드려 끼우다" },
+        { difficulty: "중급", hanja: "박다", meaning: "사진을 찍다" },
+        { difficulty: "중급", hanja: "박다", meaning: "머리를 세게 부딪치다" },
+        { difficulty: "중급", hanja: "맞다", meaning: "매나 주사를 당하다" },
+        { difficulty: "중급", hanja: "맞다", meaning: "옳거나 틀리지 않다" },
+        { difficulty: "중급", hanja: "맞다", meaning: "손님을 영접하다" },
+        { difficulty: "중급", hanja: "뜨다", meaning: "물 위에 떠오르다" },
+        { difficulty: "중급", hanja: "뜨다", meaning: "눈을 크게 벌리다" },
+        { difficulty: "중급", hanja: "뜨다", meaning: "자리를 떠나 옮기다" },
+        { difficulty: "중급", hanja: "뜯다", meaning: "붙은 것을 떼어 내다" },
+        { difficulty: "중급", hanja: "뜯다", meaning: "악기의 줄을 퉁기다" },
+
+        // 🔥 고급 (20개)
+        { difficulty: "고급", hanja: "바탕", meaning: "사물이나 현상의 근본" },
+        { difficulty: "고급", hanja: "바탕", meaning: "타고난 성질이나 재질" },
+        { difficulty: "고급", hanja: "바탕", meaning: "그림을 그리는 바닥면" },
+        { difficulty: "고급", hanja: "대하다", meaning: "얼굴을 마주 보다" },
+        { difficulty: "고급", hanja: "대하다", meaning: "대상으로 삼아 다루다" },
+        { difficulty: "고급", hanja: "틔우다", meaning: "싹이 나오게 하다" },
+        { difficulty: "고급", hanja: "틔우다", meaning: "막힌 것을 통하게 하다" },
+        { difficulty: "고급", hanja: "가시다", meaning: "입을 물로 헹구어 내다" },
+        { difficulty: "고급", hanja: "가시다", meaning: "상태나 기운이 사라지다" },
+        { difficulty: "고급", hanja: "거두다", meaning: "곡식을 수확하다" },
+        { difficulty: "고급", hanja: "거두다", meaning: "시신이나 물건을 챙겨 관리하다" },
+        { difficulty: "고급", hanja: "거두다", meaning: "아이를 돌보아 키우다" },
+        { difficulty: "고급", hanja: "겨누다", meaning: "목표를 향해 조준하다" },
+        { difficulty: "고급", hanja: "겨누다", meaning: "형편이나 상태를 가늠하다" },
+        { difficulty: "고급", hanja: "다지다", meaning: "바닥을 단단하게 누르다" },
+        { difficulty: "고급", hanja: "다지다", meaning: "마음을 굳게 결심하다" },
+        { difficulty: "고급", hanja: "다지다", meaning: "고기를 잘게 썰다" },
+        { difficulty: "고급", hanja: "곱다", meaning: "모양이나 색이 아름답다" },
+        { difficulty: "고급", hanja: "곱다", meaning: "손가락이 얼어서 굳다" },
+        { difficulty: "고급", hanja: "곱다", meaning: "가루가 아주 가늘다" }
+    ];
+
+    let fullDifficultyDB = []; 
+    let filteredDB = []; 
+    let solvedMeanings = []; 
+    let currentLevel = 1;
+    const maxLevel = 100;
+    let questionsToAnswer = 1; 
+    let currentQuestionCount = 0; 
+    let currentCorrectAnswer = "";
+
+    const introScreen = document.getElementById("intro-screen");
+    const difficultyScreen = document.getElementById("difficulty-screen");
+    const appScreen = document.getElementById("app");
+    const levelDisplay = document.getElementById("level-display");
+    const progressDisplay = document.getElementById("progress-display");
+    const hanjaDisplay = document.getElementById("hanja-display");
+    const optionsContainer = document.getElementById("options-container");
+    const messageDisplay = document.getElementById("message");
+
+    function goToDifficultySelection() {
+        initAudio(); 
+        introScreen.style.display = "none";
+        difficultyScreen.style.display = "block";
+    }
+
+    function startGame(selectedDifficulty) {
+        initAudio();
+        fullDifficultyDB = polysemyDB.filter(item => item.difficulty === selectedDifficulty);
+        filteredDB = [...fullDifficultyDB];
+        solvedMeanings = []; 
+        difficultyScreen.style.display = "none";
+        appScreen.style.display = "block";
+        levelDisplay.innerText = `${selectedDifficulty} - Level 1`;
+        generateQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function getLevelUpPopupMessage(level) {
+        if (level <= 5) return `[레벨 ${level} 달성]\n우리말 어휘력이 쑥쑥! 시작이 반이에요! 🌟`;
+        if (level <= 20) return `[레벨 ${level} 달성]\n와... 다의어 마스터의 기운이 느껴집니다! 🧠🔥`;
+        return `[레벨 ${level} 달성]\n당신의 언어 감각, 국어 선생님도 울고 가겠어요! 👏👑`;
+    }
+
+    const MZRewards = [
+        "다이어트 안 해도 1kg 순삭! 폼 미쳤다! 🏃‍♀️💨",
+        "내일 아침 꿀피부 예약! 광채 피부 등극! ✨",
+        "완전 럭키비키잖아! 행운이 가득한 하루! 🍀",
+        "통장 잔고 떡상 기운! 벼락부자 가즈아 💸🚀",
+        "갓생 살기 대성공! 주변에서 칭찬 폭격 👏"
+    ];
+
+    function generateQuestion() {
+        messageDisplay.innerText = "";
+        progressDisplay.innerText = `현재 레벨 진행도: ${currentQuestionCount} / ${questionsToAnswer}`;
+        
+        if (filteredDB.length === 0) {
+            filteredDB = [...fullDifficultyDB]; 
+        }
+
+        // 문제 선정
+        const correctEntry = filteredDB[Math.floor(Math.random() * filteredDB.length)];
+        currentCorrectAnswer = correctEntry.meaning;
+        hanjaDisplay.innerHTML = `${correctEntry.hanja}`;
+
+        // 오답 생성 (전체 DB에서 현재 정답과 다른 의미 3개 추출)
+        let wrongOptions = polysemyDB.filter(item => item.meaning !== currentCorrectAnswer);
+        wrongOptions = shuffleArray(wrongOptions).slice(0, 3);
+
+        let options = [currentCorrectAnswer, ...wrongOptions.map(item => item.meaning)];
+        options = shuffleArray(options);
+
+        optionsContainer.innerHTML = "";
+        options.forEach(optionText => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerText = optionText;
+            btn.onclick = () => checkAnswer(optionText);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedOption) {
+        if (selectedOption === currentCorrectAnswer) {
+            playDingDong(); 
+            currentQuestionCount++;
+            
+            messageDisplay.style.color = "#FF1493";
+            messageDisplay.innerText = "정답입니다! 단어 천재! 💕";
+
+            setTimeout(() => {
+                if (currentQuestionCount >= questionsToAnswer) {
+                    if (currentLevel >= maxLevel) {
+                        alert("최고 레벨 달성!"); 
+                        return;
+                    }
+                    currentLevel++;
+                    questionsToAnswer = currentLevel; 
+                    currentQuestionCount = 0;
+                    
+                    const currentDifficultyText = levelDisplay.innerText.split(' - ')[0];
+                    levelDisplay.innerText = `${currentDifficultyText} - Level ${currentLevel}`;
+                    
+                    alert(getLevelUpPopupMessage(currentLevel));
+                    generateQuestion();
+                    return; 
+                }
+                generateQuestion();
+            }, 800); 
+        } else {
+            playBeepBeep(); 
+            messageDisplay.style.color = "red";
+            messageDisplay.innerText = "앗! 그 뜻은 아니에요. 집중해서 다시! 😢";
+            currentQuestionCount = 0;
+            setTimeout(() => {
+                generateQuestion();
+            }, 1000);
+        }
+    }
+</script>
+
+</body>
+</html>
